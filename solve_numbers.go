@@ -25,7 +25,7 @@ func integerOperations1() {
 	a := ctx.newInt("a")
 	b := ctx.newInt("b")
 
-	cond := a.GT(b)
+	cond := a.SGT(b)
 	ctx.Solver.Assert(cond)
 
 	ctx.Check()
@@ -38,10 +38,10 @@ func integerOperations2() {
 	a := ctx.newInt("a")
 	b := ctx.newInt("b")
 
-	prevCond := a.GT(b)
+	prevCond := a.SGT(b)
 	ctx.Solver.Assert(prevCond.Not())
 
-	cond := a.LT(b)
+	cond := a.SLT(b)
 	ctx.Solver.Assert(cond)
 
 	ctx.Check()
@@ -54,10 +54,10 @@ func integerOperations3() {
 	a := ctx.newInt("a")
 	b := ctx.newInt("b")
 
-	prevCond1 := a.GT(b)
+	prevCond1 := a.SGT(b)
 	ctx.Solver.Assert(prevCond1.Not())
 
-	prevCond2 := a.LE(b)
+	prevCond2 := a.SLT(b)
 	ctx.Solver.Assert(prevCond2.Not())
 
 	ctx.Check()
@@ -133,7 +133,7 @@ func mixedOperations11() {
 	zero := ctx.intConst(0)
 	two := ctx.intConst(2)
 
-	cond1 := a.Mod(two).Eq(zero)
+	cond1 := a.SMod(two).Eq(zero)
 	ctx.Solver.Assert(cond1)
 
 	result := ctx.float(a).Add(b)
@@ -155,7 +155,7 @@ func mixedOperations12() {
 	zero := ctx.intConst(0)
 	two := ctx.intConst(2)
 
-	cond1 := a.Mod(two).Eq(zero)
+	cond1 := a.SMod(two).Eq(zero)
 	ctx.Solver.Assert(cond1)
 
 	result := ctx.float(a).Add(b)
@@ -177,7 +177,7 @@ func mixedOperations21() {
 	zero := ctx.intConst(0)
 	two := ctx.intConst(2)
 
-	prevCond1 := a.Mod(two).Eq(zero)
+	prevCond1 := a.SMod(two).Eq(zero)
 	ctx.Solver.Assert(prevCond1.Not())
 
 	result := ctx.float(a).Add(b)
@@ -199,7 +199,7 @@ func mixedOperations22() {
 	zero := ctx.intConst(0)
 	two := ctx.intConst(2)
 
-	prevCond1 := a.Mod(two).Eq(zero)
+	prevCond1 := a.SMod(two).Eq(zero)
 	ctx.Solver.Assert(prevCond1.Not())
 
 	result := ctx.float(a).Add(b)

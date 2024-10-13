@@ -6,6 +6,8 @@ import (
 )
 import "math"
 
+var bits = 32
+
 var maxInt = int64(math.MaxInt32)
 var minInt = int64(math.MinInt32)
 
@@ -44,21 +46,25 @@ func (ctx *Context) Check() {
 	fmt.Println("===============")
 }
 
-func (ctx *Context) intConst(value int64) z3.Int {
-	return ctx.Ctx.FromInt(value, ctx.Ctx.IntSort()).(z3.Int)
+func (ctx *Context) bvSort() z3.Sort {
+	return ctx.Ctx.BVSort(32)
 }
 
-func (ctx *Context) minInt() z3.Int {
-	return ctx.intConst(minInt)
+func (ctx *Context) intConst(value int64) z3.BV {
+	return ctx.Ctx.FromInt(value, ctx.bvSort()).(z3.BV)
 }
 
-func (ctx *Context) maxInt() z3.Int {
-	return ctx.intConst(maxInt)
-}
+//func (ctx *Context) minInt() z3.Int {
+//	return ctx.intConst(minInt)
+//}
+//
+//func (ctx *Context) maxInt() z3.Int {
+//	return ctx.intConst(maxInt)
+//}
 
-func (ctx *Context) newInt(name string) z3.Int {
-	newInt := ctx.Ctx.IntConst(name)
-	ctx.Solver.Assert(newInt.GE(ctx.minInt()).And(newInt.LE(ctx.maxInt())))
+func (ctx *Context) newInt(name string) z3.BV {
+	newInt := ctx.Ctx.BVConst(name, bits)
+	//ctx.Solver.Assert(newInt.GE(ctx.minInt()).And(newInt.LE(ctx.maxInt())))
 	return newInt
 }
 
@@ -78,8 +84,8 @@ func (ctx *Context) maxFloat() z3.Float {
 	return ctx.floatConst(maxFloat)
 }
 
-func (ctx *Context) float(value z3.Int) z3.Float {
-	return value.ToReal().ToFloat(ctx.float64Sort())
+func (ctx *Context) float(value z3.BV) z3.Float {
+	return value.SToFloat(ctx.float64Sort())
 }
 
 func (ctx *Context) int(value z3.Float) z3.Int {
