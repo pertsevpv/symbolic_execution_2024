@@ -1,8 +1,8 @@
 package main
 
 func main() {
-	//numbers()
-	//complexx()
+	numbers()
+	complexx()
 	arrays()
-	//pushPopIncrementality()
+	pushPopIncrementality()
 }
