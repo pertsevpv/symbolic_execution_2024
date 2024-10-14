@@ -97,3 +97,36 @@ func (ctx *Context) newFloat(name string) z3.Float {
 	ctx.Solver.Assert(newFloat.GE(ctx.minFloat()).And(newFloat.LE(ctx.maxFloat())))
 	return newFloat
 }
+
+// return real, imag
+func (ctx *Context) newComplex(name string) (z3.Float, z3.Float) {
+	return ctx.newFloat(name + ".real"), ctx.newFloat(name + ".imag")
+}
+
+func (ctx *Context) intArraySort() z3.Sort {
+	return ctx.Ctx.ArraySort(ctx.Ctx.BVSort(bits), ctx.Ctx.BVSort(bits))
+}
+
+// return array, array.length
+func (ctx *Context) newIntArray(name string) (z3.Array, z3.BV) {
+	length := ctx.newInt(name + ".length")
+	ctx.Solver.Assert(length.SGE(ctx.intConst(0)))
+
+	array := ctx.Ctx.Const(name+".array", ctx.intArraySort()).(z3.Array)
+	return array, length
+}
+
+// return array, array.length
+func (ctx *Context) newFieldArrays(name string, sorts map[string]z3.Sort) (map[string]z3.Array, z3.BV) {
+	length := ctx.newInt(name + ".length")
+	ctx.Solver.Assert(length.SGE(ctx.intConst(0)))
+
+	fieldArrays := map[string]z3.Array{}
+
+	for field, sort := range sorts {
+		fieldArraySort := ctx.Ctx.ArraySort(ctx.Ctx.BVSort(bits), sort)
+		fieldArrays[field] = ctx.Ctx.Const(name+"."+field+".array", fieldArraySort).(z3.Array)
+	}
+
+	return fieldArrays, length
+}
