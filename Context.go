@@ -42,7 +42,7 @@ func (ctx *Context) Check() {
 	if !sat {
 		unsatCore := ctx.Solver.GetUnsatCore()
 		for i := range unsatCore {
-			fmt.Println(unsatCore[i])
+			fmt.Println(unsatCore[i].String())
 		}
 	} else {
 		fmt.Println(ctx.Solver.Model().String())
@@ -133,4 +133,46 @@ func (ctx *Context) newFieldArrays(name string, sorts map[string]z3.Sort) (map[s
 	}
 
 	return fieldArrays, length
+}
+
+type Assumption struct {
+	Name z3.Bool
+	Cond z3.Bool
+}
+
+func (ctx *Context) SolveWithAssumptions(assumptions map[string]Assumption) {
+	ctx.Solver.Push()
+	for _, val := range assumptions {
+		ctx.Solver.AssertAndTrack(val.Cond, val.Name)
+	}
+
+	sat, err := ctx.Solver.Check()
+	if err != nil {
+		fmt.Println("Error occurred: ", err)
+		return
+	}
+
+	fmt.Println("Sat: ", sat)
+	if sat {
+		fmt.Println(ctx.Solver.Model().String())
+		fmt.Println("Assumptions: ")
+		for _, val := range assumptions {
+			fmt.Println(val.Name)
+		}
+		return
+	} else {
+		if len(assumptions) == 0 {
+			fmt.Println("Assumptions is empty")
+			return
+		}
+		ctx.Solver.Pop()
+		unsatCore := ctx.Solver.GetUnsatCore()
+		if len(unsatCore) == 0 {
+			fmt.Println("UnsatCore is empty")
+			return
+		}
+		fmt.Println("Remove ", unsatCore[0].String())
+		delete(assumptions, unsatCore[0].String())
+		ctx.SolveWithAssumptions(assumptions)
+	}
 }

@@ -5,7 +5,7 @@ func compareAndIncrement(a, b int) int {
 		c := a + 1
 
 		if c > b {
-			return 1
+			return 1 // 1
 		} else {
 			return -1
 		}
