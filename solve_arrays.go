@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/aclements/go-z3/z3"
+	"main/z3"
 )
 
 func arrays() {
@@ -98,7 +98,7 @@ func compareElement4() {
 func (ctx *Context) personMap() map[string]z3.Sort {
 	return map[string]z3.Sort{
 		"Name": ctx.Ctx.UninterpretedSort("string"),
-		"Age":  ctx.Ctx.BVSort(bits),
+		"Age":  ctx.bvSort(),
 	}
 }
 func compareAge() {

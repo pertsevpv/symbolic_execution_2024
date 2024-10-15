@@ -462,7 +462,7 @@ func nestedBitwise2() {
 	zero := ctx.intConst(0)
 
 	prevCond1 := a.SLT(zero)
-	ctx.Solver.Assert(prevCond1)
+	ctx.Solver.Assert(prevCond1.Not())
 
 	cond := b.SLT(zero)
 	ctx.Solver.Assert(cond)
@@ -479,10 +479,10 @@ func nestedBitwise3() {
 	zero := ctx.intConst(0)
 
 	prevCond1 := a.SLT(zero)
-	ctx.Solver.Assert(prevCond1)
+	ctx.Solver.Assert(prevCond1.Not())
 
 	prevCond2 := b.SLT(zero)
-	ctx.Solver.Assert(prevCond2)
+	ctx.Solver.Assert(prevCond2.Not())
 
 	cond := a.And(b).Eq(zero)
 	ctx.Solver.Assert(cond)
@@ -499,10 +499,10 @@ func nestedBitwise4() {
 	zero := ctx.intConst(0)
 
 	prevCond1 := a.SLT(zero)
-	ctx.Solver.Assert(prevCond1)
+	ctx.Solver.Assert(prevCond1.Not())
 
 	prevCond2 := b.SLT(zero)
-	ctx.Solver.Assert(prevCond2)
+	ctx.Solver.Assert(prevCond2.Not())
 
 	prevCond3 := a.And(b).Eq(zero)
 	ctx.Solver.Assert(prevCond3.Not())

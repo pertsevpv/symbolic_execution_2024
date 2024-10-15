@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/aclements/go-z3/z3"
+	"main/z3"
 )
 import "math"
 
@@ -20,10 +20,11 @@ type Context struct {
 }
 
 func newContext() Context {
-	config := z3.Config{}
-	ctx := z3.NewContext(&config)
+	ctx := z3.NewContext(&z3.Config{})
+	solver := z3.NewSolver(ctx)
+	ctx.Config().SetBool("unsat_core", true)
 	return Context{
-		Solver: z3.NewSolver(ctx),
+		Solver: solver,
 		Ctx:    ctx,
 	}
 }
@@ -39,7 +40,10 @@ func (ctx *Context) Check() {
 
 	fmt.Println("Sat: ", sat)
 	if !sat {
-		// todo Unsat core here
+		unsatCore := ctx.Solver.GetUnsatCore()
+		for i := range unsatCore {
+			fmt.Println(unsatCore[i])
+		}
 	} else {
 		fmt.Println(ctx.Solver.Model().String())
 	}
@@ -124,7 +128,7 @@ func (ctx *Context) newFieldArrays(name string, sorts map[string]z3.Sort) (map[s
 	fieldArrays := map[string]z3.Array{}
 
 	for field, sort := range sorts {
-		fieldArraySort := ctx.Ctx.ArraySort(ctx.Ctx.BVSort(bits), sort)
+		fieldArraySort := ctx.Ctx.ArraySort(ctx.bvSort(), sort)
 		fieldArrays[field] = ctx.Ctx.Const(name+"."+field+".array", fieldArraySort).(z3.Array)
 	}
 
